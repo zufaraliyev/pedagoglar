@@ -1,88 +1,32 @@
-# PedStart — Bo'lajak pedagoglar uchun raqamli tayyorgarlik platformasi
+# PedStart
 
-> **Slogan:** "Bo'lajak pedagoglar uchun muvaffaqiyatli start va raqamli tayyorgarlik makoni."
+Bo'lajak boshlang'ich sinf o'qituvchilari uchun darslar, testlar, gamifikatsiya va AI yordamida baholash platformasi.
 
-Ushbu platforma bo'lajak boshlang'ich sinf o'qituvchilarining pedagogik tayyorgarligini M.B. Muxamadaliyeva va boshqa tadqiqotchilarning 4 ta asosiy komponenti (**Motivatsion**, **Kognitiv**, **Operatsion-faoliyatli**, **Refleksiv**) asosida rivojlantirish va Sun'iy Intellekt (OpenRouter API) yordamida baholashga mo'ljallangan.
+## Deploy arxitekturasi
 
----
+- **Render**: bitta bepul Docker web service; FastAPI API va Vue frontend shu servisda ishlaydi.
+- **Neon**: PostgreSQL ma'lumotlar bazasi uchun bepul reja.
+- **OpenRouter**: ixtiyoriy. Kalit berilmasa ochiq topshiriqlar ichki baholash usuli bilan ishlaydi.
 
-## 🛠 Texnologik Stek
-- **Backend:** Python 3.11+, FastAPI, SQLAlchemy 2.0 ORM, Pydantic v2, HTTPX.
-- **Frontend:** Vue.js 3 (Composition API / `<script setup>`), Tailwind CSS, Pinia, Axios.
-- **Ma'lumotlar bazasi:** **MySQL 8.0+** (aiomysql / pymysql drayveri, `utf8mb4` kodlash).
-- **Sun'iy Intellekt:** OpenRouter API (`openai/gpt-4o-mini` yoki `anthropic/claude-3-haiku`).
+Frontend va API bir domen ostida beriladi. Vue ilovasi `/api` manzillaridan foydalanadi, shuning uchun productionda lokal proxy yoki alohida frontend API manzili kerak emas.
 
----
+## Internetga joylash
 
-## 🗄 1. MySQL Ma'lumotlar Bazasini Sozlash
+1. Repositoriyani GitHub'ga push qiling.
+2. [Neon](https://neon.tech) da bepul PostgreSQL loyihasi yarating. Connection stringni pooled connection string sifatida oling; unda `sslmode=require` bo'lishi kerak.
+3. [Render](https://render.com) akkauntida GitHub repositoriyasidan **Blueprint** yarating va `zufaraliyev/pedagoglar` repositoriyasini tanlang.
+4. Blueprint `DATABASE_URL` so'raganda Neon connection stringini kiriting. `SECRET_KEY` Render tomonidan avtomatik yaratiladi.
+5. Deploy tugagach, Render bergan `https://...onrender.com` manzilini oching. `/health` endpointi `{ "status": "ok" }` qaytarishi kerak.
 
-### A) Avtomatik yaratish:
-FastAPI backend ishga tushganda yoki `python seed.py` buyrug'i berilganda, agar `pedstart_db` bazasi mavjud bo'lmasa, uni **avtomatik** `utf8mb4_unicode_ci` kodi bilan yaratadi.
+Render Blueprint konfiguratsiyasi repozitoriya ildizidagi [`render.yaml`](../render.yaml) faylida, Docker build esa [`Dockerfile`](../Dockerfile) faylida.
 
-### B) Qo'lda yaratish (ixtiyoriy):
-Agar MySQL terminali yoki phpMyAdmin orqali yaratmoqchi bo'lsangiz:
-```sql
-CREATE DATABASE pedstart_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-```
-Yoki tayyor [`backend/schema.sql`](file:///d:/Antigravity/PEDSTART/backend/schema.sql) faylini phpMyAdmin yoki quyidagi buyruq orqali import qilishingiz mumkin:
-```bash
-mysql -u root -p < backend/schema.sql
-```
+### Bepul reja cheklovlari
 
-### C) `.env` faylida ulanishni ko'rsatish:
-`backend/.env` faylida MySQL parolingizni kiritasiz:
-```env
-DB_USER=root
-DB_PASSWORD=sizning_parolingiz
-DB_HOST=localhost
-DB_PORT=3306
-DB_NAME=pedstart_db
+Render bepul web service faol bo'lmaganda uxlaydi, shu sababli uzoq tanaffusdan keyingi birinchi ochilish sekinroq bo'lishi mumkin. Neon bepul bazasining limitlari va bepul tariflar vaqt o'tishi bilan o'zgarishi mumkin. Ishga tushirish uchun OpenRouter API kaliti shart emas.
 
-DATABASE_URL=mysql+aiomysql://root:sizning_parolingiz@localhost:3306/pedstart_db?charset=utf8mb4
-```
+## Foydalanuvchi va ma'lumotlar
 
----
-
-## 🚀 2. Backendni Ishga Tushirish (FastAPI + MySQL)
-
-```bash
-cd backend
-
-# Virtual muhit (ixtiyoriy)
-python -m venv venv
-venv\Scripts\activate
-
-# Kerakli kutubxonalarni o'rnatish:
-pip install -r requirements.txt
-
-# MySQL bazasiga boshlang'ich modullar va ma'lumotlarni yozish:
-python seed.py
-
-# FastAPI serverini ishga tushirish:
-uvicorn main:app --reload --port 8000
-```
-
-Swagger API interfeysi: `http://127.0.0.1:8000/docs`
-
----
-
-## 💻 3. Frontendni Ishga Tushirish (Vue.js 3 + Tailwind CSS)
-
-```bash
-cd frontend
-
-# Paketlarni o'rnatish:
-npm install
-
-# Loyihani dev rejimda ishga tushirish:
-npm run dev
-```
-
-Brauzerda: `http://localhost:5173`
-
----
-
-## 🔑 Demo Foydalanuvchi
-- **Login:** `talaba`
-- **Parol:** `talaba123`
-*(Yoki yangi login/parol kiritib, verifikatsiyasiz darhol ro'yxatdan o'tishingiz mumkin).*
+- Demo parol bilan umumiy hisob yaratilmaydi; foydalanuvchi saytda ro'yxatdan o'tadi.
+- Kurs ma'lumotlari faqat bo'sh bazaga birinchi ishga tushganda qo'shiladi.
+- Keyingi deploy/restartlarda talaba hisoblari va natijalari qayta o'chirilmaydi.
+- Dars matnlari `DATA/` dagi mavjud `.docx` va `.pptx` fayllardan olinadi; fayl yo'q bo'lsa, dars uchun o'rnatilgan zaxira matn ishlatiladi.

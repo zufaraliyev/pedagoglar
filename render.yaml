@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: pedstart
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: SECRET_KEY
+        generateValue: true
+      - key: OPENROUTER_MODEL
+        value: openai/gpt-4o-mini

@@ -93,7 +93,7 @@ onMounted(async () => {
           <span class="font-bold text-slate-700">PedStart</span> — Bo'lajak pedagoglar uchun muvaffaqiyatli start va raqamli tayyorgarlik makoni.
         </div>
         <div class="text-[11px] text-slate-400">
-          FastAPI + Vue.js 3 + MySQL 8.0 + OpenRouter API
+          FastAPI + Vue.js 3 + PostgreSQL + OpenRouter API
         </div>
       </div>
     </footer>

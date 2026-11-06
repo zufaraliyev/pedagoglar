@@ -2,10 +2,11 @@ import os
 import json
 import logging
 from contextlib import asynccontextmanager
+from pathlib import Path
 from typing import List, Optional, Dict, Any
 
 from fastapi import FastAPI, Depends, HTTPException, status
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
@@ -23,6 +24,8 @@ from gamification import calculate_level_and_status, check_and_award_badges
 from ai_evaluator import evaluate_pedagogical_task
 from seed import seed_data
 
+logger = logging.getLogger("pedstart.api")
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     ensure_mysql_database_exists()
@@ -30,9 +33,13 @@ async def lifespan(app: FastAPI):
         async with engine.begin() as conn:
             await conn.run_sync(Base.metadata.create_all)
         await seed_data()
-    except Exception as e:
-        print(f"Boshlang'ich ma'lumotlarni tekshirishda xabar: {e}")
-    yield
+    except Exception:
+        logger.exception("Ma'lumotlar bazasini ishga tushirishda xatolik.")
+        raise
+    try:
+        yield
+    finally:
+        await engine.dispose()
 
 app = FastAPI(
     title="PedStart API",
@@ -40,16 +47,6 @@ app = FastAPI(
     version="1.0.0",
     lifespan=lifespan
 )
-
-# CORS sozlamalari
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
 
 def build_user_out(user: models.User, badge_codes: List[str] = None) -> schemas.UserOut:
     level, status_title, next_xp, progress_pct = calculate_level_and_status(user.xp)
@@ -534,6 +531,16 @@ async def get_badges(
         )
         for b in badges
     ]
+
+
+@app.get("/health")
+async def health_check():
+    return {"status": "ok"}
+
+
+frontend_dist = Path(__file__).resolve().parent.parent / "frontend" / "dist"
+if frontend_dist.is_dir():
+    app.mount("/", StaticFiles(directory=frontend_dist, html=True), name="frontend")
 
 
 if __name__ == "__main__":

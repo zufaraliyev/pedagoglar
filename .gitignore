@@ -10,3 +10,4 @@ dist/
 Thumbs.db
 *.sqlite3
 *.db
+/pedstart_db.sql

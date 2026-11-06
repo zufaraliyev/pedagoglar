@@ -1,23 +1,16 @@
-﻿# Pedagoglar
+# PedStart — bo'lajak pedagoglar uchun raqamli tayyorgarlik platformasi
 
-Bo'lajak pedagoglar uchun raqamli tayyorgarlik platformasi.
+PedStart darslar, testlar, o'quv natijalari va AI yordamida ochiq topshiriqlarni baholashni birlashtiradi.
 
-## Loyihani tarkibi
-- `PEDSTART/` - asosiy loyiha kodi
-- `pedstart_db.sql` - ma'lumotlar bazasi fayli
+## Internetga joylash
 
-## Texnologiyalar
-- Python + FastAPI
-- Vue 3 + Vite + Tailwind
-- MySQL
-- OpenRouter AI
+Frontend va backend bitta Render Docker servisida, ma'lumotlar Neon PostgreSQL'da ishlaydi.
 
-## Ishga tushirish
-1. `cd PEDSTART/backend`
-2. `pip install -r requirements.txt`
-3. `python seed.py`
-4. `uvicorn main:app --reload --port 8000`
-5. `cd ../frontend && npm install && npm run dev`
+Bepul deploy bo'yicha bosqichma-bosqich yo'riqnoma: [PEDSTART/README.md](PEDSTART/README.md).
 
-## Maqsad
-Bo'lajak boshlang'ich sinf o'qituvchilarining pedagogik tayyorgarligini rivojlantirish va AI yordamida baholash.
+## Tuzilishi
+
+- `PEDSTART/backend/` — FastAPI, SQLAlchemy va PostgreSQL/MySQL ulanishi
+- `PEDSTART/frontend/` — Vue 3 va Vite
+- `PEDSTART/DATA/` — kurs uchun manba hujjatlar
+- `Dockerfile`, `render.yaml` — Render deploy konfiguratsiyasi

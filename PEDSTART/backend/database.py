@@ -1,77 +1,97 @@
-import os
 import logging
+import os
+
+import pymysql
 from dotenv import load_dotenv
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
+from sqlalchemy.engine import make_url
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
 
 load_dotenv()
 logger = logging.getLogger("pedstart.db")
 
-# 1. MySQL konfiguratsiya parametrlarini o'qish
 DB_USER = os.getenv("DB_USER", "root")
 DB_PASSWORD = os.getenv("DB_PASSWORD", "")
 DB_HOST = os.getenv("DB_HOST", "localhost")
 DB_PORT = os.getenv("DB_PORT", "3306")
 DB_NAME = os.getenv("DB_NAME", "pedstart_db")
 
-# Standart MySQL URL (aiomysql drayveri orqali)
-default_mysql_url = f"mysql+aiomysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}?charset=utf8mb4"
-DATABASE_URL = os.getenv("DATABASE_URL", default_mysql_url)
+default_mysql_url = (
+    f"mysql+aiomysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/"
+    f"{DB_NAME}?charset=utf8mb4"
+)
+database_url = os.getenv("DATABASE_URL", default_mysql_url)
 
-# Agar foydalanuvchi "mysql://" formatida yozgan bo'lsa, uni "mysql+aiomysql://" ga o'giramiz
-if DATABASE_URL.startswith("mysql://"):
-    DATABASE_URL = DATABASE_URL.replace("mysql://", "mysql+aiomysql://", 1)
+if database_url.startswith("mysql://"):
+    database_url = database_url.replace("mysql://", "mysql+aiomysql://", 1)
+elif database_url.startswith(("postgres://", "postgresql://")):
+    database_url = database_url.replace("postgres://", "postgresql+asyncpg://", 1)
+    database_url = database_url.replace("postgresql://", "postgresql+asyncpg://", 1)
+
+url = make_url(database_url)
+connect_args = {}
+
+if url.get_backend_name() == "postgresql":
+    query = dict(url.query)
+    sslmode = query.pop("sslmode", None)
+    query.pop("channel_binding", None)
+    url = url.set(query=query)
+    if sslmode and sslmode != "disable":
+        connect_args["ssl"] = "require"
+elif url.get_backend_name() == "mysql":
+    connect_args["charset"] = "utf8mb4"
+
+DATABASE_URL = url.render_as_string(hide_password=False)
 
 
 def ensure_mysql_database_exists():
-    """
-    Agar MySQL serverida 'pedstart_db' bazasi hali yaratilmagan bo'lsa,
-    uni utf8mb4 kodi bilan avtomatik yaratadi (Unknown database xatosini oldini olish uchun).
-    """
+    if url.get_backend_name() != "mysql":
+        return
+
     try:
-        import pymysql
-        conn = pymysql.connect(
+        connection = pymysql.connect(
             host=DB_HOST,
             port=int(DB_PORT),
             user=DB_USER,
             password=DB_PASSWORD,
-            charset="utf8mb4"
+            charset="utf8mb4",
         )
-        with conn.cursor() as cursor:
-            cursor.execute(f"CREATE DATABASE IF NOT EXISTS `{DB_NAME}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;")
-        conn.commit()
-        conn.close()
-        logger.info(f"MySQL bazasi '{DB_NAME}' tekshirildi/yaratildi.")
-    except Exception as e:
-        logger.warning(
-            f"MySQL bazasini tekshirishda ogohlantirish: {e}. "
-            "Iltimos, MySQL xizmati (masalan, XAMPP / MySQL Server) yoqilganini tekshiring."
-        )
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    f"CREATE DATABASE IF NOT EXISTS `{DB_NAME}` "
+                    "CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+                )
+            connection.commit()
+        finally:
+            connection.close()
+        logger.info("MySQL bazasi '%s' tekshirildi/yaratildi.", DB_NAME)
+    except Exception:
+        logger.exception("MySQL bazasini tekshirishda xatolik yuz berdi.")
+        raise
 
 
-# MySQL uchun engine sozlamalari
-# DIQQAT: pool_pre_ping=True aiomysql/asyncmy bilan TypeError: ping() missing 1 required positional argument: 'reconnect' xatosini chaqirishi mumkin.
-# Shuning uchun pool_recycle=3600 yetarli va barqaror.
 engine = create_async_engine(
     DATABASE_URL,
     echo=False,
     future=True,
     pool_recycle=3600,
-    connect_args={"charset": "utf8mb4"}
+    connect_args=connect_args,
 )
 
 AsyncSessionLocal = async_sessionmaker(
     bind=engine,
     class_=AsyncSession,
     expire_on_commit=False,
-    autoflush=False
+    autoflush=False,
 )
+
 
 class Base(DeclarativeBase):
     pass
 
+
 async def get_db():
-    """FastAPI yo'llari uchun ma'lumotlar bazasi sessiyasi dependency'si"""
     async with AsyncSessionLocal() as session:
         try:
             yield session

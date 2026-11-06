@@ -1,0 +1,13 @@
+.git
+.venv
+venv
+node_modules
+PEDSTART/frontend/node_modules
+PEDSTART/frontend/dist
+PEDSTART/backend/.env
+PEDSTART/backend/*.db
+PEDSTART/DATA/*.jpg
+PEDSTART/DATA/*.doc
+PEDSTART/DATA/*_extracted.txt
+__pycache__
+*.pyc

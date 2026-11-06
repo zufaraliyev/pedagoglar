@@ -2,14 +2,14 @@ import os
 import json
 import asyncio
 import re
+from pathlib import Path
 import docx
 from pptx import Presentation
 from sqlalchemy import select, delete
 from database import engine, AsyncSessionLocal, Base, ensure_mysql_database_exists
 import models
-from security import get_password_hash
 
-DATA_DIR = r"D:\Antigravity\PEDSTART\DATA"
+DATA_DIR = Path(__file__).resolve().parent.parent / "DATA"
 
 def clean_uz_text(text):
     if not text:
@@ -252,6 +252,12 @@ async def seed_full_database():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
+    async with AsyncSessionLocal() as db:
+        existing_module = await db.scalar(select(models.Module.id).limit(1))
+        if existing_module is not None:
+            print("Boshlang'ich ma'lumotlar mavjud; foydalanuvchi ma'lumotlari saqlandi.")
+            return
+
     # 300 ta testni o'qish
     tests_file = os.path.join(os.path.dirname(__file__), "all_tests.json")
     with open(tests_file, "r", encoding="utf-8") as f:
@@ -282,23 +288,7 @@ async def seed_full_database():
         db.add_all(badges)
         await db.flush()
 
-        # 2. Demo User
-        user_res = await db.execute(select(models.User).where(models.User.username == "talaba"))
-        demo_user = user_res.scalar_one_or_none()
-        if not demo_user:
-            demo_user = models.User(
-                username="talaba",
-                hashed_password=get_password_hash("talaba123"),
-                full_name="Dilnoza Rahimova",
-                role="student",
-                xp=180,
-                level=1,
-                status_title="Pedagog-izlanuvchi"
-            )
-            db.add(demo_user)
-            await db.flush()
-
-        # 3. Modullar va 15 ta Ma'ruza + 15 ta Amaliyot darslari
+        # 2. Modullar va 15 ta Ma'ruza + 15 ta Amaliyot darslari
         module_instances = {}
         for m_cfg in MODULES_CONFIG:
             m = models.Module(
