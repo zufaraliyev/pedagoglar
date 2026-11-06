@@ -1,10 +1,63 @@
 <script setup>
 import { computed } from 'vue'
+import { marked } from 'marked'
 import { useCourseStore } from '../stores/course'
 
 const courseStore = useCourseStore()
 const lesson = computed(() => courseStore.activeLesson)
 const activeModule = computed(() => courseStore.activeModule)
+
+const lessonHtml = computed(() => {
+  const raw = lesson.value?.content || `
+## Bu mavzu bo'yicha nazariy ma'lumot
+
+Bu yerda darsning asosiy nazariy qismi, tushunchalar, pedagogik tamoyillar va amaliy tavsiyalar yoziladi.
+
+<div class="mini-grid">
+  <div class="mini-card">
+    <h4>Pedagogik maqsad</h4>
+    <p>O‘quvchilarni ilmiy dunyoqarashi va kasbiy standartga moslashuviga yo‘naltirish.</p>
+  </div>
+  <div class="mini-card">
+    <h4>Asosiy tamoyillar</h4>
+    <p>Interfaol, uzluksiz va refleksiv yondashuvlar orqali bilimlarni chuqurlashtirish.</p>
+  </div>
+  <div class="mini-card">
+    <h4>Amaliy qo‘llanma</h4>
+    <p>Har bir topshiriqni mustaqil tahlil qilish, tajriba va baholash bilan mustahkamlash.</p>
+  </div>
+</div>
+
+- Pedagogik maqsad va vazifalar
+- Asosiy tushunchalar va ilmiy prinsiplar
+- Amaliy qo'llanma va baholash mezonlari
+`
+
+  if (!raw) return ''
+
+  if (/<[a-z][\s\S]*>/i.test(raw)) {
+    return raw
+  }
+
+  return marked.parse(raw)
+})
+
+const infographicCards = [
+  {
+    title: 'Pedagogik tayyorgarlik infografikasi',
+    image:
+      'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80',
+    alt: 'Talabalar bilan ishlash infografikasi',
+    text: "Pedagogik kompetensiyani rivojlantirishning asosiy yo'nalishlari."
+  },
+  {
+    title: "Natija ko'rsatkichlari",
+    image:
+      'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1200&q=80',
+    alt: 'Baholash va natijalar diagrammasi',
+    text: "Olingan bilim va ko'nikmalarni baholashning zamonaviy yondashuvi."
+  }
+]
 
 const goToQuiz = () => {
   if (lesson.value && activeModule.value) {
@@ -193,8 +246,50 @@ const getComponentMeta = (comp) => {
         <span class="text-xs text-slate-400 font-semibold">PedStart Ilmiy Kutubxonasi</span>
       </div>
 
-      <div class="text-slate-700 leading-relaxed space-y-4 font-normal text-sm sm:text-base whitespace-pre-line">
-        {{ lesson.content }}
+      <div class="lesson-content text-slate-700 leading-relaxed space-y-4 font-normal text-sm sm:text-base" v-html="lessonHtml"></div>
+
+      <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 mt-6">
+        <div
+          v-for="card in infographicCards"
+          :key="card.title"
+          class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xs"
+        >
+          <img :src="card.image" :alt="card.alt" class="h-52 w-full object-cover" loading="lazy" />
+          <div class="p-4">
+            <h4 class="text-sm font-black text-slate-900">{{ card.title }}</h4>
+            <p class="mt-2 text-xs leading-relaxed text-slate-600">{{ card.text }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-6 rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-50 to-indigo-50 p-5">
+        <div class="flex items-center justify-between gap-3 mb-4">
+          <h4 class="text-sm font-black text-slate-900">Mavzuni baholash diagrammasi</h4>
+          <span class="text-[10px] font-bold uppercase tracking-[0.18em] text-indigo-600">% natija</span>
+        </div>
+
+        <div class="grid grid-cols-5 items-end gap-3 h-40">
+          <div class="flex flex-col items-center gap-2">
+            <div class="w-full rounded-t-2xl bg-gradient-to-t from-indigo-600 to-indigo-400" style="height: 38%"></div>
+            <span class="text-[10px] font-bold text-slate-500">1</span>
+          </div>
+          <div class="flex flex-col items-center gap-2">
+            <div class="w-full rounded-t-2xl bg-gradient-to-t from-blue-600 to-blue-400" style="height: 52%"></div>
+            <span class="text-[10px] font-bold text-slate-500">2</span>
+          </div>
+          <div class="flex flex-col items-center gap-2">
+            <div class="w-full rounded-t-2xl bg-gradient-to-t from-emerald-600 to-emerald-400" style="height: 74%"></div>
+            <span class="text-[10px] font-bold text-slate-500">3</span>
+          </div>
+          <div class="flex flex-col items-center gap-2">
+            <div class="w-full rounded-t-2xl bg-gradient-to-t from-amber-500 to-amber-300" style="height: 88%"></div>
+            <span class="text-[10px] font-bold text-slate-500">4</span>
+          </div>
+          <div class="flex flex-col items-center gap-2">
+            <div class="w-full rounded-t-2xl bg-gradient-to-t from-rose-500 to-rose-300" style="height: 96%"></div>
+            <span class="text-[10px] font-bold text-slate-500">5</span>
+          </div>
+        </div>
       </div>
 
       <!-- Xulosa qutisi (Infografik xulosa) -->

@@ -4,6 +4,8 @@ import { useAuthStore } from './stores/auth'
 import { useCourseStore } from './stores/course'
 
 import HeaderGamification from './components/HeaderGamification.vue'
+import HomePage from './components/HomePage.vue'
+import UserDashboard from './components/UserDashboard.vue'
 import ModuleSidebar from './components/ModuleSidebar.vue'
 import LessonContent from './components/LessonContent.vue'
 import QuizRunner from './components/QuizRunner.vue'
@@ -14,6 +16,37 @@ const authStore = useAuthStore()
 const courseStore = useCourseStore()
 
 const showAuthModal = ref(false)
+const currentView = ref('home')
+
+const openHome = () => {
+  currentView.value = 'home'
+}
+
+const openDashboard = () => {
+  if (!authStore.isAuthenticated) {
+    showAuthModal.value = true
+    return
+  }
+  currentView.value = 'dashboard'
+}
+
+const startLearning = (moduleId = null) => {
+  if (!authStore.isAuthenticated) {
+    showAuthModal.value = true
+    return
+  }
+
+  currentView.value = 'learning'
+
+  if (moduleId && courseStore.modules.length) {
+    courseStore.activeModuleId = moduleId
+    const module = courseStore.modules.find((item) => item.id === moduleId)
+    if (module?.lessons?.length) {
+      courseStore.activeLessonId = module.lessons[0].id
+      courseStore.activeContentType = 'lesson'
+    }
+  }
+}
 
 onMounted(async () => {
   if (authStore.token) {
@@ -25,18 +58,20 @@ onMounted(async () => {
 
 <template>
   <div class="min-h-screen bg-slate-50 flex flex-col font-sans text-slate-800">
-    <!-- Header va Gamifikatsiya Paneli (ixcham va zamonaviy) -->
-    <HeaderGamification @open-auth="showAuthModal = true" />
+    <HeaderGamification
+      @open-auth="showAuthModal = true"
+      @go-home="openHome"
+      @open-dashboard="openDashboard"
+    />
 
-    <!-- Ilmiy-Metodik Asos va Banner (ixcham qator) -->
-    <section class="bg-gradient-to-r from-indigo-950 via-indigo-900 to-indigo-950 text-white py-2.5 px-4 sm:px-6 border-b border-indigo-800/60 shadow-xs">
+    <section v-if="currentView !== 'learning'" class="bg-gradient-to-r from-indigo-950 via-indigo-900 to-indigo-950 text-white py-2.5 px-4 sm:px-6 border-b border-indigo-800/60 shadow-xs">
       <div class="max-w-[1600px] mx-auto flex flex-col md:flex-row items-center justify-between gap-2 text-xs">
         <div class="flex items-center gap-2">
           <span class="px-2 py-0.5 rounded bg-amber-400 text-indigo-950 font-black text-[10px] tracking-wider uppercase">
             METODIK ASOS
           </span>
           <span class="text-indigo-200">
-            M.B. Muxamadaliyeva konsepsiyasi:
+            <!-- M.B. Muxamadaliyeva konsepsiyasi: -->
           </span>
           <span class="font-bold text-white hidden sm:inline">
             4 ta tayyorgarlik komponenti (Motivatsion, Kognitiv, Operatsion, Refleksiv)
@@ -46,47 +81,47 @@ onMounted(async () => {
         <div class="flex items-center gap-3 text-xs font-semibold text-indigo-200">
           <span class="flex items-center gap-1.5">
             <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            Test tizimi: 10 ta (Dars) • 25 ta (Modul) • 50 ta (Attestatsiya)
+            Test tizimi test rejimida ishlamoqda...
           </span>
         </div>
       </div>
     </section>
 
-    <!-- Asosiy Ishchi Oyna (Keng ekranli Sidebar + Katta Content Workspace) -->
-    <main class="max-w-[1600px] w-full mx-auto px-4 sm:px-6 py-5 flex-1 flex flex-col lg:flex-row gap-6 items-start">
-      <!-- Chap tomon: Modullar ixcham menyusi (aniq kenglik bilan) -->
+    <main v-if="currentView === 'home'" class="max-w-[1600px] w-full mx-auto px-4 sm:px-6 py-6 flex-1">
+      <HomePage
+        @open-auth="showAuthModal = true"
+        @start-learning="startLearning"
+        @open-dashboard="openDashboard"
+      />
+    </main>
+
+    <main v-else-if="currentView === 'dashboard'" class="max-w-[1600px] w-full mx-auto px-4 sm:px-6 py-6 flex-1">
+      <UserDashboard @start-learning="startLearning" @go-home="openHome" />
+    </main>
+
+    <main v-else class="max-w-[1600px] w-full mx-auto px-4 sm:px-6 py-5 flex-1 flex flex-col lg:flex-row gap-6 items-start">
       <ModuleSidebar class="w-full lg:w-[340px] lg:shrink-0" />
 
-      <!-- O'ng tomon: Keng Markaziy Ish Maydoni (KONTENTGA 75-80% JOY) -->
       <div class="flex-1 w-full min-w-0">
-        <!-- Yuklanmoqda holati -->
         <div v-if="courseStore.isLoading" class="p-12 text-center bg-white rounded-3xl border border-slate-200 shadow-xs">
           <div class="animate-spin text-4xl mb-3">🎓</div>
           <div class="text-slate-600 font-bold text-sm">PedStart modullari yuklanmoqda...</div>
         </div>
 
-        <!-- Modul va dars tanlanmagan holat -->
         <div v-else-if="!courseStore.activeModule && courseStore.activeContentType !== 'quiz'" class="p-12 text-center bg-white rounded-3xl border border-slate-200 shadow-xs">
           <div class="text-4xl mb-3">📖</div>
           <h3 class="text-base font-bold text-slate-800">Boshlash uchun modulni tanlang</h3>
           <p class="text-xs text-slate-500 mt-1">Chap menyudan o'rganmoqchi bo'lgan ma'ruza yoki amaliy topshiriqni bosing.</p>
         </div>
 
-        <!-- Tanlangan Kontent Ko'rinishi -->
         <div v-else class="w-full">
-          <!-- 1. Nazariy Ma'ruza yoki Amaliyot Darsi -->
           <LessonContent v-if="courseStore.activeContentType === 'lesson'" />
-
-          <!-- 2. Test Topshirig'i Runner (10 ta, 25 ta yoki 50 ta test) -->
           <QuizRunner v-else-if="courseStore.activeContentType === 'quiz'" />
-
-          <!-- 3. SI Ochiq Topshiriq Evaluator -->
           <OpenTaskSection v-else-if="courseStore.activeContentType === 'task'" />
         </div>
       </div>
     </main>
 
-    <!-- Footer -->
     <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500 mt-auto">
       <div class="max-w-[1600px] mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
         <div>
@@ -98,7 +133,6 @@ onMounted(async () => {
       </div>
     </footer>
 
-    <!-- Kirish / Ro'yxatdan o'tish modali -->
     <AuthModal v-if="showAuthModal" @close="showAuthModal = false" />
   </div>
 </template>
