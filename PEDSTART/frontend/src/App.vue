@@ -81,7 +81,7 @@ onMounted(async () => {
         <div class="flex items-center gap-3 text-xs font-semibold text-indigo-200">
           <span class="flex items-center gap-1.5">
             <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            Test tizimi test rejimida ishlamoqda...
+            SI test tizimi sinov rejimida ishlamoqda
           </span>
         </div>
       </div>
