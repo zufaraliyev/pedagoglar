@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: pedstart
+    name: pedtayyor
     runtime: docker
     plan: free
     dockerfilePath: ./Dockerfile

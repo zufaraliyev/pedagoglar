@@ -1,6 +1,6 @@
-# PedStart — bo'lajak pedagoglar uchun raqamli tayyorgarlik platformasi
+# PedTayyor — bo'lajak pedagoglar uchun raqamli tayyorgarlik platformasi
 
-PedStart darslar, testlar, o'quv natijalari va AI yordamida ochiq topshiriqlarni baholashni birlashtiradi.
+PedTayyor darslar, testlar, o'quv natijalari va AI yordamida ochiq topshiriqlarni baholashni birlashtiradi.
 
 ## Internetga joylash
 

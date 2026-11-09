@@ -14,7 +14,7 @@ def extract_all_tests():
     all_tests = []
     
     # 1. Parse 200 test .doc (GIFT format)
-    with open(r'D:\Antigravity\PEDSTART\DATA\200_test_extracted.txt', 'r', encoding='utf-8', errors='ignore') as f:
+    with open(r'D:\Antigravity\PEDTAYYOR\DATA\200_test_extracted.txt', 'r', encoding='utf-8', errors='ignore') as f:
         content = f.read().replace('\xa0', ' ').replace('\r', '')
         
     blocks = re.split(r'::\d+::', content)
@@ -50,7 +50,7 @@ def extract_all_tests():
     print(f"Loaded {len(all_tests)} questions from 200_test.")
     
     # 2. Parse yakuniy_100
-    with open(r'D:\Antigravity\PEDSTART\DATA\yakuniy_100_extracted.txt', 'r', encoding='utf-8', errors='ignore') as f:
+    with open(r'D:\Antigravity\PEDTAYYOR\DATA\yakuniy_100_extracted.txt', 'r', encoding='utf-8', errors='ignore') as f:
         y_lines = [l.strip() for l in f.readlines() if l.strip()]
         
     i = 0
@@ -82,7 +82,7 @@ def extract_all_tests():
             
     print(f"Loaded {y_count} questions from yakuniy_100. Total questions: {len(all_tests)}")
     
-    with open(r'D:\Antigravity\PEDSTART\backend\all_tests.json', 'w', encoding='utf-8') as out:
+    with open(r'D:\Antigravity\PEDTAYYOR\backend\all_tests.json', 'w', encoding='utf-8') as out:
         json.dump(all_tests, out, ensure_ascii=False, indent=2)
     print("Saved all_tests.json successfully!")
 

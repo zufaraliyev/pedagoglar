@@ -42,7 +42,7 @@ const handleSubmit = async () => {
           🎓
         </div>
         <h3 class="text-2xl font-extrabold text-slate-900">
-          {{ isLoginMode ? "PedStart tizimiga kirish" : "Ro'yxatdan o'tish" }}
+          {{ isLoginMode ? "PedTayyor tizimiga kirish" : "Ro'yxatdan o'tish" }}
         </h3>
         <p class="text-xs text-slate-500 mt-1">
           Faqat Login va Parol kifoya. Email yoki SMS tasdiqlash talab qilinmaydi.

@@ -4,7 +4,7 @@ conn = pymysql.connect(
     host="localhost",
     user="root",
     password="",
-    database="pedstart_db",
+    database="pedtayyor_db",
     charset="utf8mb4"
 )
 with conn.cursor() as cursor:

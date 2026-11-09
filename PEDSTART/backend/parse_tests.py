@@ -61,12 +61,12 @@ def parse_gift(text):
     return parsed
 
 if __name__ == '__main__':
-    with open(r'D:\Antigravity\PEDSTART\DATA\200_test_extracted.txt', 'r', encoding='utf-8', errors='ignore') as f:
+    with open(r'D:\Antigravity\PEDTAYYOR\DATA\200_test_extracted.txt', 'r', encoding='utf-8', errors='ignore') as f:
         t200 = f.read()
     res200 = parse_gift(t200)
     print(f"Parsed {len(res200)} questions from 200_test.")
 
-    with open(r'D:\Antigravity\PEDSTART\DATA\yakuniy_100_extracted.txt', 'r', encoding='utf-8', errors='ignore') as f:
+    with open(r'D:\Antigravity\PEDTAYYOR\DATA\yakuniy_100_extracted.txt', 'r', encoding='utf-8', errors='ignore') as f:
         t100 = f.read()
     res100 = parse_gift(t100)
     print(f"Parsed {len(res100)} questions from yakuniy_100.")

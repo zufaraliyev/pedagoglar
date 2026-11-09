@@ -8,13 +8,13 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 from sqlalchemy.orm import DeclarativeBase
 
 load_dotenv()
-logger = logging.getLogger("pedstart.db")
+logger = logging.getLogger("pedtayyor.db")
 
 DB_USER = os.getenv("DB_USER", "root")
 DB_PASSWORD = os.getenv("DB_PASSWORD", "")
 DB_HOST = os.getenv("DB_HOST", "localhost")
 DB_PORT = os.getenv("DB_PORT", "3306")
-DB_NAME = os.getenv("DB_NAME", "pedstart_db")
+DB_NAME = os.getenv("DB_NAME", "pedtayyor_db")
 
 default_mysql_url = (
     f"mysql+aiomysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/"

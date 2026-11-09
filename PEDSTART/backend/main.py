@@ -24,7 +24,7 @@ from gamification import calculate_level_and_status, check_and_award_badges
 from ai_evaluator import evaluate_pedagogical_task
 from seed import seed_data
 
-logger = logging.getLogger("pedstart.api")
+logger = logging.getLogger("pedtayyor.api")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -42,7 +42,7 @@ async def lifespan(app: FastAPI):
         await engine.dispose()
 
 app = FastAPI(
-    title="PedStart API",
+    title="PedTayyor API",
     description="Bo'lajak pedagoglar uchun muvaffaqiyatli start va raqamli tayyorgarlik platformasi",
     version="1.0.0",
     lifespan=lifespan
@@ -305,7 +305,7 @@ async def get_course_final_quiz(db: AsyncSession = Depends(get_db)):
 
     return schemas.QuizDetailOut(
         quiz_type="course_final",
-        title="PedStart: Boshlang'ich ta'lim pedagogikasi kursi bo'yicha YAKUNIY ATTESTATSIYA (50 ta savol)",
+        title="PedTayyor: Boshlang'ich ta'lim pedagogikasi kursi bo'yicha YAKUNIY ATTESTATSIYA (50 ta savol)",
         total_questions=len(tests),
         time_limit_minutes=60,
         questions=[

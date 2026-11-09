@@ -35,7 +35,7 @@ const handleLogout = () => {
           <div>
             <div class="flex items-center gap-2">
               <span class="text-xl sm:text-2xl font-black tracking-tight bg-gradient-to-r from-indigo-700 to-indigo-500 bg-clip-text text-transparent">
-                PedStart
+                PedTayyor
               </span>
               <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">
                 v1.0 AI

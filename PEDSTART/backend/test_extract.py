@@ -3,7 +3,7 @@ import docx
 import re
 from pptx import Presentation
 
-data_dir = r"D:\Antigravity\PEDSTART\DATA"
+data_dir = r"D:\Antigravity\PEDTAYYOR\DATA"
 
 def clean_uz_text(text):
     if not text:

@@ -74,7 +74,7 @@ const getComponentMeta = (comp) => {
 
       <div class="relative max-w-4xl space-y-6">
         <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-500/20 border border-indigo-400/30 text-amber-300 text-xs font-black tracking-wider uppercase backdrop-blur-xs">
-          <span>🎓</span> "PEDSTART" RAQAMLI EKOTIZIMI
+          <span>🎓</span> "PEDTAYYOR" RAQAMLI EKOTIZIMI
         </div>
 
         <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-tight">

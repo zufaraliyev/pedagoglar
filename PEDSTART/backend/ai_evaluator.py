@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-logger = logging.getLogger("pedstart.ai")
+logger = logging.getLogger("pedtayyor.ai")
 
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "").strip()
 OPENROUTER_MODEL = os.getenv("OPENROUTER_MODEL", "openai/gpt-4o-mini")
@@ -57,8 +57,8 @@ async def evaluate_pedagogical_task(
         try:
             headers = {
                 "Authorization": f"Bearer {OPENROUTER_API_KEY}",
-                "HTTP-Referer": "https://pedstart.uz",
-                "X-Title": "PedStart Pedagogical Platform",
+                "HTTP-Referer": "https://pedtayyor.uz",
+                "X-Title": "PedTayyor Pedagogical Platform",
                 "Content-Type": "application/json"
             }
 

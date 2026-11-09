@@ -1,7 +1,7 @@
 import os
 import docx
 
-data_dir = r"D:\Antigravity\PEDSTART\DATA"
+data_dir = r"D:\Antigravity\PEDTAYYOR\DATA"
 files = sorted([f for f in os.listdir(data_dir) if f.endswith('.docx')])
 
 print(f"Jami .docx fayllar: {len(files)}")

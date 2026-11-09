@@ -1,10 +1,13 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
 
+const USER_STORAGE_KEY = 'pedtayyor_user'
+const TOKEN_STORAGE_KEY = 'pedtayyor_token'
+
 export const useAuthStore = defineStore('auth', {
   state: () => ({
-    user: JSON.parse(localStorage.getItem('pedstart_user') || 'null'),
-    token: localStorage.getItem('pedstart_token') || null,
+    user: JSON.parse(localStorage.getItem(USER_STORAGE_KEY) || 'null'),
+    token: localStorage.getItem(TOKEN_STORAGE_KEY) || null,
     isLoading: false,
     error: null,
   }),
@@ -27,8 +30,8 @@ export const useAuthStore = defineStore('auth', {
         const response = await axios.post('/api/auth/login', { username, password })
         this.token = response.data.access_token
         this.user = response.data.user
-        localStorage.setItem('pedstart_token', this.token)
-        localStorage.setItem('pedstart_user', JSON.stringify(this.user))
+        localStorage.setItem(TOKEN_STORAGE_KEY, this.token)
+        localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(this.user))
         axios.defaults.headers.common['Authorization'] = `Bearer ${this.token}`
         return true
       } catch (err) {
@@ -50,8 +53,8 @@ export const useAuthStore = defineStore('auth', {
         })
         this.token = response.data.access_token
         this.user = response.data.user
-        localStorage.setItem('pedstart_token', this.token)
-        localStorage.setItem('pedstart_user', JSON.stringify(this.user))
+        localStorage.setItem(TOKEN_STORAGE_KEY, this.token)
+        localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(this.user))
         axios.defaults.headers.common['Authorization'] = `Bearer ${this.token}`
         return true
       } catch (err) {
@@ -68,7 +71,7 @@ export const useAuthStore = defineStore('auth', {
         axios.defaults.headers.common['Authorization'] = `Bearer ${this.token}`
         const response = await axios.get('/api/auth/me')
         this.user = response.data
-        localStorage.setItem('pedstart_user', JSON.stringify(this.user))
+        localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(this.user))
       } catch (err) {
         if (err.response?.status === 401) {
           this.logout()
@@ -84,15 +87,15 @@ export const useAuthStore = defineStore('auth', {
       if (newBadge && !this.user.badges.includes(newBadge)) {
         this.user.badges.push(newBadge)
       }
-      localStorage.setItem('pedstart_user', JSON.stringify(this.user))
+      localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(this.user))
       this.fetchProfile()
     },
 
     logout() {
       this.token = null
       this.user = null
-      localStorage.removeItem('pedstart_token')
-      localStorage.removeItem('pedstart_user')
+      localStorage.removeItem(TOKEN_STORAGE_KEY)
+      localStorage.removeItem(USER_STORAGE_KEY)
       delete axios.defaults.headers.common['Authorization']
     }
   }

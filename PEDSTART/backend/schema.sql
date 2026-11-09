@@ -1,13 +1,13 @@
 -- ====================================================================
--- PEDSTART PLATFORMASI: MySQL Ma'lumotlar Bazasi Sxemasi (schema.sql)
+-- PEDTAYYOR PLATFORMASI: MySQL Ma'lumotlar Bazasi Sxemasi (schema.sql)
 -- Kodlash: utf8mb4_unicode_ci (O'zbek lotin va kirill alifbosi uchun)
 -- ====================================================================
 
-CREATE DATABASE IF NOT EXISTS `pedstart_db`
+CREATE DATABASE IF NOT EXISTS `pedtayyor_db`
   DEFAULT CHARACTER SET utf8mb4
   DEFAULT COLLATE utf8mb4_unicode_ci;
 
-USE `pedstart_db`;
+USE `pedtayyor_db`;
 
 -- 1. Foydalanuvchilar (Users)
 CREATE TABLE IF NOT EXISTS `users` (

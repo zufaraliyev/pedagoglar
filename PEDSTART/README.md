@@ -1,4 +1,4 @@
-# PedStart
+# PedTayyor
 
 Bo'lajak boshlang'ich sinf o'qituvchilari uchun darslar, testlar, gamifikatsiya va AI yordamida baholash platformasi.
 

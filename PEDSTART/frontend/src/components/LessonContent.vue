@@ -163,7 +163,7 @@ const getComponentMeta = (comp) => {
       <div class="relative w-full aspect-video rounded-2xl overflow-hidden bg-slate-950 shadow-md">
         <iframe
           :src="embedVideoUrl"
-          title="PedStart Video Darsi"
+          title="PedTayyor Video Darsi"
           class="w-full h-full border-0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           allowfullscreen
@@ -243,7 +243,7 @@ const getComponentMeta = (comp) => {
         <h3 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
           <span>📑</span> Darsning Nazariy-Metodik Mazmuni
         </h3>
-        <span class="text-xs text-slate-400 font-semibold">PedStart Ilmiy Kutubxonasi</span>
+        <span class="text-xs text-slate-400 font-semibold">PedTayyor Ilmiy Kutubxonasi</span>
       </div>
 
       <div class="lesson-content text-slate-700 leading-relaxed space-y-4 font-normal text-sm sm:text-base" v-html="lessonHtml"></div>

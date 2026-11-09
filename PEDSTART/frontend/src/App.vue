@@ -105,7 +105,7 @@ onMounted(async () => {
       <div class="flex-1 w-full min-w-0">
         <div v-if="courseStore.isLoading" class="p-12 text-center bg-white rounded-3xl border border-slate-200 shadow-xs">
           <div class="animate-spin text-4xl mb-3">🎓</div>
-          <div class="text-slate-600 font-bold text-sm">PedStart modullari yuklanmoqda...</div>
+          <div class="text-slate-600 font-bold text-sm">PedTayyor modullari yuklanmoqda...</div>
         </div>
 
         <div v-else-if="!courseStore.activeModule && courseStore.activeContentType !== 'quiz'" class="p-12 text-center bg-white rounded-3xl border border-slate-200 shadow-xs">
@@ -125,7 +125,7 @@ onMounted(async () => {
     <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500 mt-auto">
       <div class="max-w-[1600px] mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
         <div>
-          <span class="font-bold text-slate-700">PedStart</span> — Bo'lajak pedagoglar uchun muvaffaqiyatli start va raqamli tayyorgarlik makoni.
+          <span class="font-bold text-slate-700">PedTayyor</span> — Bo'lajak pedagoglar uchun muvaffaqiyatli start va raqamli tayyorgarlik makoni.
         </div>
         <div class="text-[11px] text-slate-400">
           FastAPI + Vue.js 3 + PostgreSQL + OpenRouter API
